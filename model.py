@@ -50,7 +50,7 @@ with st.sidebar:
     llm = 'lucataco/llama-2-7b-chat:6ab580ab4eef2c2b440f2441ec0fc0ace5470edaf2cbea50b8550aec0b3fbd38'
 
     #st.markdown('Buy me a coffee [link](https://www.buymeacoffee.com/ishubham4)')
-    os.environ['REPLICATE_API_TOKEN']=add_replicate_api
+os.environ['REPLICATE_API_TOKEN']=add_replicate_api
 
 #Store the LLM Generated Reponese
 
