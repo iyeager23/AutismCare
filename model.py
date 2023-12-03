@@ -34,11 +34,15 @@ with st.sidebar:
     st.title("💬 AutismCare Companion Chatbot")
     st.header("Settings")
 
-    add_replicate_api=st.text_input('Enter the API token', type='password')
-    if not (add_replicate_api.startswith('r8_') and len(add_replicate_api)==40):
-        st.warning('Please enter your credentials', icon='⚠️')
+    if 'REPLICATE_API_TOKEN' in st.secrets:
+        st.success('API key already provided!', icon='✅')
+        add_replicate_api = st.secrets['REPLICATE_API_TOKEN']
     else:
-        st.success('Proceed to entering your prompt message!', icon='👉')
+        add_replicate_api=st.text_input('Enter the API token', type='password')
+        if not (add_replicate_api.startswith('r8_') and len(add_replicate_api)==40):
+            st.warning('Please enter your credentials', icon='⚠️')
+        else:
+            st.success('Proceed to entering your prompt message!', icon='👉')
 
     st.subheader("Kindly click the provided link to complete the form and obtain your API token for running the chatbot [link](https://docs.google.com/forms/d/e/1FAIpQLSdqAiXYk1Wk36Ocjpi6bdZo3GFALkqWh5PwwSzSmisFLp3wnw/viewform)")
 
@@ -46,8 +50,7 @@ with st.sidebar:
     llm = 'lucataco/llama-2-7b-chat:6ab580ab4eef2c2b440f2441ec0fc0ace5470edaf2cbea50b8550aec0b3fbd38'
 
     #st.markdown('Buy me a coffee [link](https://www.buymeacoffee.com/ishubham4)')
-
-os.environ['REPLICATE_API_TOKEN']=add_replicate_api
+    os.environ['REPLICATE_API_TOKEN']=add_replicate_api
 
 #Store the LLM Generated Reponese
 
