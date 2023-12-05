@@ -31,16 +31,14 @@ st.set_page_config(page_title="💬 AutismCare Companion Chatbot with Streamlit"
 
 #Create a Side bar
 with st.sidebar:
-    st.title("💬 AutismCare Companion Chatbot")
-    st.header("Settings")
-
+    st.title('🦙💬 Llama 2 Chatbot')
     if 'REPLICATE_API_TOKEN' in st.secrets:
         st.success('API key already provided!', icon='✅')
-        add_replicate_api = st.secrets['REPLICATE_API_TOKEN']
+        replicate_api = st.secrets['REPLICATE_API_TOKEN']
     else:
-        add_replicate_api=st.text_input('Enter the API token', type='password')
-        if not (add_replicate_api.startswith('r8_') and len(add_replicate_api)==40):
-            st.warning('Please enter your credentials', icon='⚠️')
+        replicate_api = st.text_input('Enter Replicate API token:', type='password')
+        if not (replicate_api.startswith('r8_') and len(replicate_api)==40):
+            st.warning('Please enter your credentials!', icon='⚠️')
         else:
             st.success('Proceed to entering your prompt message!', icon='👉')
 
@@ -50,7 +48,7 @@ with st.sidebar:
     llm = 'lucataco/llama-2-7b-chat:6ab580ab4eef2c2b440f2441ec0fc0ace5470edaf2cbea50b8550aec0b3fbd38'
 
     #st.markdown('Buy me a coffee [link](https://www.buymeacoffee.com/ishubham4)')
-os.environ['REPLICATE_API_TOKEN']=add_replicate_api
+os.environ['REPLICATE_API_TOKEN']= replicate_api
 
 #Store the LLM Generated Reponese
 
@@ -95,7 +93,7 @@ def generate_llama2_response(prompt_input):
 
 #User -Provided Prompt
 
-if prompt := st.chat_input(disabled=not add_replicate_api):
+if prompt := st.chat_input(disabled=not replicate_api):
     st.session_state.messages.append({"role": "user", "content":prompt})
     with st.chat_message("user"):
         st.write(prompt)
@@ -114,7 +112,6 @@ if st.session_state.messages[-1]["role"] != "assistant":
             st.write(relevant_message)
             message = {"role": "assistant", "content": relevant_message}
             st.session_state.messages.append(message)
-
 
 
 
