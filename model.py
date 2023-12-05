@@ -1,6 +1,8 @@
 import streamlit as st
 import replicate
 import os
+import re
+import time
 
 
 B_INST, E_INST = "[INST]", "[/INST]"
@@ -28,10 +30,12 @@ def remove_substring(string, substring):
 
 st.set_page_config(page_title="💬 AutismCare Companion Chatbot with Streamlit")
 
+placeholder = st.container()
 
+placeholder.title("💬 AutismCare Companion Chatbot")
 #Create a Side bar
 with st.sidebar:
-    st.title('🦙💬 Llama 2 Chatbot')
+    st.title('💬 AutismCare Companion Chatbot')
     if 'REPLICATE_API_TOKEN' in st.secrets:
         st.success('API key already provided!', icon='✅')
         replicate_api = st.secrets['REPLICATE_API_TOKEN']
@@ -41,8 +45,7 @@ with st.sidebar:
             st.warning('Please enter your credentials!', icon='⚠️')
         else:
             st.success('Proceed to entering your prompt message!', icon='👉')
-
-    st.subheader("Kindly click the provided link to complete the form and obtain your API token for running the chatbot [link](https://docs.google.com/forms/d/e/1FAIpQLSdqAiXYk1Wk36Ocjpi6bdZo3GFALkqWh5PwwSzSmisFLp3wnw/viewform)")
+    st.subheader("Feel free to reach out to me at ishuyegar@gmail.com for any further assistance or inquiries.")
 
 
     llm = 'lucataco/llama-2-7b-chat:6ab580ab4eef2c2b440f2441ec0fc0ace5470edaf2cbea50b8550aec0b3fbd38'
@@ -83,7 +86,7 @@ def generate_llama2_response(prompt_input):
         else:
             new_prompt+="Assistant" + data["content"] + "\n\n"
     output = replicate.run(llm, input={"prompt": f"{new_prompt} {prompt_input} Assistant: ",
-                                     "temperature":0.1})
+                                     "temperature":0.1,"max_length": 4096, "repititon_penalty":1})
     final_outputs = cut_off_text(output, '</s>')
     final_outputs = remove_substring(final_outputs, new_prompt)
 
@@ -109,9 +112,19 @@ if st.session_state.messages[-1]["role"] != "assistant":
         start_index = response_text.find("Assistant: [/INST]")
         if start_index != -1:
             relevant_message = response_text[start_index + len("Assistant: [/INST]"):]
-            st.write(relevant_message)
-            message = {"role": "assistant", "content": relevant_message}
-            st.session_state.messages.append(message)
+            full_response = ""
+            message_placeholder = st.empty()
+
+            for chunk in re.findall(r'\S+|\n', relevant_message):
+                full_response += chunk + " "
+                time.sleep(0.05)
+                # Add a blinking cursor to simulate typing
+                message_placeholder.markdown(full_response + "▌")
+            message_placeholder.markdown(full_response)
+
+            st.session_state.messages.append({"role": "assistant", "content": full_response})
+
+
 
 
 
