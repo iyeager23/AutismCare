@@ -75,8 +75,8 @@ st.sidebar.button('Clear Chat History', on_click=clear_chat_history)
 
 # Create a Function to generate the Llama 2 Response
 def generate_llama2_response(prompt_input):
-    default_system_prompt="""\
-    You are a helpful, child psychiatrist assistant at "Child Development & Treatment Centre" and honest. Always answer as helpfully as possible, while being safe and then you stop. The answer should be short, straight and to the point. If you don't know the answer to a question, please don't share false information."""
+    default_system_prompt="""
+    You are a helpful, child therapist assistant at "Child Development & Treatment Centre" and honest. Always answer as helpfully as possible, while being safe and then you stop. The answer should be short, straight and to the point."""
 
     new_prompt = get_prompt(default_system_prompt)
     for data in st.session_state.messages:
@@ -86,7 +86,7 @@ def generate_llama2_response(prompt_input):
         else:
             new_prompt+="Assistant" + data["content"] + "\n\n"
     output = replicate.run(llm, input={"prompt": f"{new_prompt} {prompt_input} Assistant: ",
-                                     "temperature":0.1,"max_length": 4096, "repititon_penalty":1})
+                                     "temperature":0.1,"max_length": 4096,"top_p": 0.95, "repititon_penalty":1.1})
     final_outputs = cut_off_text(output, '</s>')
     final_outputs = remove_substring(final_outputs, new_prompt)
 
